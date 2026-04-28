@@ -4,6 +4,20 @@
 
 Rome 的目标很直接：一台机器作为服务端等待连接，另一台机器作为客户端接入，然后在公网环境下远程控制 `Claude Code`、普通 shell 或 `cmd.exe`。当前版本使用 EMQX 公共 MQTT Broker，并对消息做 TLS 传输与端到端密封。
 
+## 工作流程
+
+```mermaid
+flowchart LR
+    A["服务端启动 Rome"] --> B["自动生成本地配置与 token"]
+    B --> C["连接公共 MQTT Broker"]
+    C --> D["等待客户端 attach"]
+    E["客户端启动 Rome"] --> F["读取本地配置中的 brokerUrl 与 token"]
+    F --> G["连接同一个 MQTT Broker"]
+    G --> H["向服务端发送 attach / start"]
+    H --> I["服务端启动远程命令"]
+    I --> J["双方通过密封消息转发 stdin / stdout / stderr"]
+```
+
 ## 特性
 
 - 不需要自建中转服务器
@@ -45,6 +59,8 @@ Linux/macOS：
 
 首次启动时，Rome 会自动生成本地 `rome.config.json`，并写入随机 `token`。
 
+服务端启动后会一直等待客户端连接，不会主动发起会话。
+
 ### 3. 把配置同步给客户端机器
 
 只需要同步下面两个值：
@@ -71,6 +87,7 @@ Linux/macOS：
 ```
 
 客户端会使用相同的 `brokerUrl` 和 `token` 自动连接。
+连接成功后，客户端会自动 attach，并在服务端确认后启动远程命令会话。
 
 ## 命令行用法
 
