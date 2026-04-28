@@ -37,6 +37,8 @@ export interface ExitMessage {
 export interface StatusMessage {
   state: 'online' | 'busy' | 'offline';
   detail?: string;
+  channelName?: string;
+  directUrl?: string;
 }
 
 export interface AttachMessage {

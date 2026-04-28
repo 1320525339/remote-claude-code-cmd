@@ -39,9 +39,9 @@ if not exist "dist\cli.js" (
 )
 
 echo.
-echo Auto connecting using rome.config.json ...
+echo Pairing and connecting ...
 echo.
-node bin\rome.js connect
+node bin\rome.js pair
 
 echo.
 echo (session ended)

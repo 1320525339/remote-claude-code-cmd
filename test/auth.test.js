@@ -1,5 +1,6 @@
 const assert = require('assert');
 const { signPayload, verifyPayload } = require('../dist/auth.js');
+const { sealDirectFrame, openDirectFrame } = require('../dist/direct-common.js');
 
 const token = '0123456789abcdef0123456789abcdef';
 const body = { hello: 'world' };
@@ -23,4 +24,13 @@ try {
 }
 assert.ok(threw, 'tampered payload should fail');
 
-console.log('PASS: auth sealing test');
+const directRaw = sealDirectFrame(token, 'stdout', 'secret-output');
+assert.ok(!directRaw.includes('secret-output'));
+
+const directFrame = openDirectFrame(token, directRaw);
+assert.deepStrictEqual(directFrame, {
+  type: 'stdout',
+  payload: 'secret-output',
+});
+
+console.log('PASS: auth and direct sealing test');

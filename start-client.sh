@@ -24,6 +24,6 @@ if [ ! -f "dist/cli.js" ]; then
 fi
 
 echo
-echo "Auto connecting using rome.config.json ..."
+echo "Pairing and connecting ..."
 echo
-node bin/rome.js connect
+node bin/rome.js pair

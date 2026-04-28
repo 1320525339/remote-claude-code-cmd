@@ -1,6 +1,8 @@
 {
   "brokerUrl": "mqtts://broker.emqx.io:8883",
   "token": "replace-with-a-random-32-byte-hex-token",
+  "channelName": "你的服务器名称",
+  "directUrl": "ws://192.168.1.10:31731",
   "client": {
     "cmd": "cmd.exe",
     "args": []
@@ -8,6 +10,9 @@
   "server": {
     "shell": "cmd.exe",
     "args": [],
-    "workDir": ""
+    "workDir": "",
+    "publicDirectUrl": "",
+    "autoTunnel": true,
+    "cloudflaredPath": ""
   }
 }

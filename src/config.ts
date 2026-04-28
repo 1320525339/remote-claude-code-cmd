@@ -5,6 +5,8 @@ import { generateToken } from './util';
 export interface RomeConfig {
   brokerUrl?: string;
   token?: string;
+  channelName?: string;
+  directUrl?: string;
   client?: {
     token?: string;
     cmd?: string;
@@ -15,6 +17,9 @@ export interface RomeConfig {
     shell?: string;
     args?: string[];
     workDir?: string;
+    publicDirectUrl?: string;
+    autoTunnel?: boolean;
+    cloudflaredPath?: string;
   };
 }
 
@@ -43,6 +48,8 @@ export function ensureConfig(): RomeConfig {
   const next: RomeConfig = {
     brokerUrl: current.brokerUrl || 'mqtts://broker.emqx.io:8883',
     token: isStrongToken(current.token) ? current.token : generateToken(24),
+    channelName: current.channelName || defaultChannelName(),
+    directUrl: current.directUrl,
     client: {
       token: isStrongToken(current.client?.token) ? current.client?.token : undefined,
       cmd: current.client?.cmd || (process.platform === 'win32' ? 'cmd.exe' : undefined),
@@ -53,6 +60,9 @@ export function ensureConfig(): RomeConfig {
       shell: current.server?.shell || (process.platform === 'win32' ? 'cmd.exe' : undefined),
       args: current.server?.args || [],
       workDir: current.server?.workDir || '',
+      publicDirectUrl: current.server?.publicDirectUrl,
+      autoTunnel: current.server?.autoTunnel ?? true,
+      cloudflaredPath: current.server?.cloudflaredPath,
     },
   };
 
@@ -69,6 +79,78 @@ export function ensureConfig(): RomeConfig {
   return next;
 }
 
-function isStrongToken(token: string | undefined): token is string {
+export function loadClientConfig(): RomeConfig {
+  return loadConfig();
+}
+
+export interface ClientConnectionState {
+  token: string;
+  brokerUrl?: string;
+  channelName?: string;
+  directUrl?: string;
+}
+
+export function saveClientToken(token: string, brokerUrl?: string): void {
+  const file = getConfigPath();
+  const current = loadConfig();
+  const next: RomeConfig = {
+    brokerUrl: brokerUrl || current.brokerUrl || 'mqtts://broker.emqx.io:8883',
+    token: current.token || token,
+    channelName: current.channelName,
+    directUrl: current.directUrl,
+    client: {
+      token,
+      cmd: current.client?.cmd || (process.platform === 'win32' ? 'cmd.exe' : undefined),
+      args: current.client?.args || [],
+    },
+    server: {
+      token: current.server?.token,
+      shell: current.server?.shell || (process.platform === 'win32' ? 'cmd.exe' : undefined),
+      args: current.server?.args || [],
+      workDir: current.server?.workDir || '',
+      publicDirectUrl: current.server?.publicDirectUrl,
+      autoTunnel: current.server?.autoTunnel ?? true,
+      cloudflaredPath: current.server?.cloudflaredPath,
+    },
+  };
+
+  fs.writeFileSync(file, JSON.stringify(next, null, 2) + '\n', 'utf8');
+}
+
+export function saveClientConnection(state: ClientConnectionState): void {
+  const file = getConfigPath();
+  const current = loadConfig();
+  const nextDirectUrl = Object.prototype.hasOwnProperty.call(state, 'directUrl')
+    ? state.directUrl
+    : current.directUrl;
+  const next: RomeConfig = {
+    brokerUrl: state.brokerUrl || current.brokerUrl || 'mqtts://broker.emqx.io:8883',
+    token: current.token,
+    channelName: state.channelName || current.channelName,
+    directUrl: nextDirectUrl,
+    client: {
+      token: state.token,
+      cmd: current.client?.cmd || (process.platform === 'win32' ? 'cmd.exe' : undefined),
+      args: current.client?.args || [],
+    },
+    server: {
+      token: current.server?.token,
+      shell: current.server?.shell || (process.platform === 'win32' ? 'cmd.exe' : undefined),
+      args: current.server?.args || [],
+      workDir: current.server?.workDir || '',
+      publicDirectUrl: current.server?.publicDirectUrl,
+      autoTunnel: current.server?.autoTunnel ?? true,
+      cloudflaredPath: current.server?.cloudflaredPath,
+    },
+  };
+
+  fs.writeFileSync(file, JSON.stringify(next, null, 2) + '\n', 'utf8');
+}
+
+export function isStrongToken(token: string | undefined): token is string {
   return !!token && token.length >= 32 && !/^replace-with-/i.test(token);
+}
+
+function defaultChannelName(): string {
+  return `${process.env.COMPUTERNAME || process.env.HOSTNAME || 'rome'}-${process.platform}`;
 }

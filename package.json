@@ -1,7 +1,7 @@
 {
   "name": "rome",
   "version": "0.2.0",
-  "description": "基于公网 MQTT 中转的远程命令行桥接工具，支持端到端密封消息。",
+  "description": "基于公网 MQTT 中转并支持自动公网直连的远程命令行桥接工具。",
   "bin": {
     "rome": "./bin/rome.js"
   },
@@ -10,7 +10,7 @@
     "build": "tsc",
     "start": "node bin/rome.js",
     "dev": "tsc --watch",
-    "test": "npm run build && node test/config.test.js && node test/auth.test.js"
+    "test": "npm run build && node test/config.test.js && node test/auth.test.js && node test/tunnel.test.js"
   },
   "dependencies": {
     "chalk": "^4.1.2",
