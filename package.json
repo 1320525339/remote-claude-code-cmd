@@ -1,0 +1,28 @@
+{
+  "name": "rome",
+  "version": "0.2.0",
+  "description": "Remote shell bridge over a public MQTT relay with end-to-end sealed messages.",
+  "bin": {
+    "rome": "./bin/rome.js"
+  },
+  "main": "dist/cli.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node bin/rome.js",
+    "dev": "tsc --watch",
+    "test": "npm run build && node test/config.test.js && node test/auth.test.js"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^11.1.0",
+    "mqtt": "^5.15.1",
+    "node-pty": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "brokerUrl": "mqtts://broker.emqx.io:8883",
+  "token": "replace-with-a-random-32-byte-hex-token",
+  "client": {
+    "cmd": "cmd.exe",
+    "args": []
+  },
+  "server": {
+    "shell": "cmd.exe",
+    "args": [],
+    "workDir": ""
+  }
+}
