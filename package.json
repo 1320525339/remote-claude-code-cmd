@@ -1,7 +1,7 @@
 {
   "name": "rome",
   "version": "0.2.0",
-  "description": "Remote shell bridge over a public MQTT relay with end-to-end sealed messages.",
+  "description": "基于公网 MQTT 中转的远程命令行桥接工具，支持端到端密封消息。",
   "bin": {
     "rome": "./bin/rome.js"
   },

@@ -1,110 +1,110 @@
 # Rome
 
-Remote shell bridge over a public MQTT relay.
+基于公网 MQTT 中转的远程命令行桥接工具。
 
-Rome lets one machine wait as a remote shell host and another machine attach as a client. It is designed for simple cross-network use without owning a relay server. The current relay mode uses the public EMQX MQTT broker over TLS and seals each message end-to-end with a shared token.
+Rome 的目标很直接：一台机器作为服务端等待连接，另一台机器作为客户端接入，然后在公网环境下远程控制 `Claude Code`、普通 shell 或 `cmd.exe`。当前版本使用 EMQX 公共 MQTT Broker，并对消息做 TLS 传输与端到端密封。
 
-## Features
+## 特性
 
-- No self-hosted relay required
-- Automatic local config generation on first run
-- End-to-end sealed MQTT messages
-- Interactive PTY support through `node-pty`
-- Windows-friendly defaults with `cmd.exe`
-- Works from the current server launch directory by default
+- 不需要自建中转服务器
+- 首次运行自动生成本地配置
+- 消息端到端密封，公网 Broker 无法直接读明文
+- 基于 `node-pty`，支持交互式终端
+- Windows 默认使用 `cmd.exe`
+- 服务端默认在启动时所在目录执行远程命令
 
-## Security model
+## 安全模型
 
-- Anyone who knows the shared token has full remote shell access
-- Message contents are sealed before going through the public broker
-- The repo does not ship a live token; `rome.config.json` is generated locally and ignored by git
+- 任何知道共享 `token` 的人，都拥有完整远程控制权限
+- 消息内容在进入公共 Broker 前会被密封
+- 仓库不会提交真实配置；`rome.config.json` 只在本地生成，并已加入 git 忽略
 
-Use a strong random token and share it only with trusted users.
+因此必须使用强随机 `token`，并只分享给可信对象。
 
-## Quick start
+## 快速开始
 
-### 1. Install
+### 1. 安装依赖
 
 ```bash
 npm install
 ```
 
-### 2. Start the server machine
+### 2. 在服务端机器启动
 
-Windows:
+Windows：
 
 ```bat
 start-server.bat
 ```
 
-Linux/macOS:
+Linux/macOS：
 
 ```bash
 ./start-server.sh
 ```
 
-On first run, Rome creates a local `rome.config.json` with a generated token.
+首次启动时，Rome 会自动生成本地 `rome.config.json`，并写入随机 `token`。
 
-### 3. Share config with the client machine
+### 3. 把配置同步给客户端机器
 
-Copy only the values of:
+只需要同步下面两个值：
 
 - `brokerUrl`
 - `token`
 
-from your local `rome.config.json` into the client machine's local `rome.config.json`.
+把服务端本地 `rome.config.json` 中这两个字段，复制到客户端本地 `rome.config.json` 即可。
 
-You can start from `rome.config.json.example`.
+可以先从 `rome.config.json.example` 复制一份模板。
 
-### 4. Start the client machine
+### 4. 在客户端机器启动
 
-Windows:
+Windows：
 
 ```bat
 start-client.bat
 ```
 
-Linux/macOS:
+Linux/macOS：
 
 ```bash
 ./start-client.sh
 ```
 
-The client auto-connects using the shared broker and token.
+客户端会使用相同的 `brokerUrl` 和 `token` 自动连接。
 
-## CLI
+## 命令行用法
 
-Server:
+服务端：
 
 ```bash
 node bin/rome.js serve
 ```
 
-Client:
+客户端：
 
 ```bash
 node bin/rome.js connect
 ```
 
-Useful server options:
+### 服务端常用参数
 
-- `--broker <url>` override MQTT broker URL
-- `--shell <cmd>` set default remote shell
-- `--args <args...>` set default shell args
-- `--dir <path>` set remote working directory
-- `--token <token>` override shared token
-- `--keep` keep server alive after a session ends
+- `--broker <url>`：覆盖 MQTT Broker 地址
+- `--shell <cmd>`：设置默认远程命令
+- `--args <args...>`：设置默认命令参数
+- `--dir <path>`：设置远程命令工作目录
+- `--token <token>`：覆盖共享 token
+- `--keep`：会话结束后保持服务端继续运行
 
-Useful client options:
+### 客户端常用参数
 
-- `--broker <url>` override MQTT broker URL
-- `--cmd <cmd>` command to start remotely
-- `--args <args...>` args for the remote command
-- `--token <token>` override shared token
+- `--broker <url>`：覆盖 MQTT Broker 地址
+- `--cmd <cmd>`：指定远程启动命令
+- `--args <args...>`：指定远程命令参数
+- `--token <token>`：覆盖共享 token
 
-## Config
+## 配置文件
 
-Example local config:
+本地配置示例：
 
 ```json
 {
@@ -122,28 +122,28 @@ Example local config:
 }
 ```
 
-Notes:
+说明：
 
-- If `server.workDir` is empty, Rome uses the current directory where the server was started
-- If `rome.config.json` is missing or has a weak token, Rome generates a new local one automatically
+- 如果 `server.workDir` 为空，Rome 会使用服务端启动时的当前目录
+- 如果 `rome.config.json` 不存在，或其中的 `token` 太弱，Rome 会自动重新生成本地配置
 
-## Development
+## 开发
 
 ```bash
 npm run build
 npm test
 ```
 
-## Relay
+## 中转
 
-Default broker:
+默认 Broker：
 
 - `mqtts://broker.emqx.io:8883`
 
-Reference:
+参考：
 
 - [EMQX Public MQTT Broker](https://www.emqx.com/en/mqtt/public-mqtt5-broker)
 
-## License
+## 许可证
 
 MIT

@@ -1,31 +1,31 @@
 ---
-name: Bug report
-about: Report a reproducible problem
-title: "[bug] "
+name: 缺陷反馈
+about: 提交一个可复现的问题
+title: "[缺陷] "
 labels: bug
 assignees: ""
 ---
 
-## Summary
+## 问题概述
 
-Describe the problem clearly.
+请直接描述问题。
 
-## Environment
+## 运行环境
 
-- OS:
-- Node version:
-- Server machine or client machine:
+- 操作系统：
+- Node 版本：
+- 问题发生在服务端还是客户端：
 
-## Steps to reproduce
+## 复现步骤
 
 1.
 2.
 3.
 
-## Expected result
+## 预期结果
 
-## Actual result
+## 实际结果
 
-## Logs or screenshots
+## 日志或截图
 
-Paste relevant output here.
+请粘贴相关输出。

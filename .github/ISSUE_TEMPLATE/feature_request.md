@@ -1,23 +1,23 @@
 ---
-name: Feature request
-about: Suggest an improvement
-title: "[feature] "
+name: 功能建议
+about: 提交一个改进建议
+title: "[功能] "
 labels: enhancement
 assignees: ""
 ---
 
-## Problem
+## 现有问题
 
-What limitation are you hitting?
+你当前遇到了什么限制？
 
-## Proposed change
+## 建议改动
 
-Describe the behavior you want.
+请描述你希望的行为。
 
-## Alternatives considered
+## 已考虑的替代方案
 
-List any alternatives you already evaluated.
+列出你已经评估过的其他方案。
 
-## Additional context
+## 补充信息
 
-Anything else that helps scope the request.
+补充任何有助于判断范围的信息。
